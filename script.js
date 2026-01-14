@@ -241,7 +241,39 @@
       btn.hidden = false;
       // Pequeña animación al aparecer
       btn.classList.remove("on");
+      tryAutoplayMuted();
     }, 2000);
+
+    // Si el usuario hace scroll o toca la pantalla, intentamos iniciar la música (esto cuenta como gesto del usuario).
+    let startedByGesture = false;
+
+    const startFromGesture = async () => {
+      if (startedByGesture) return;
+      startedByGesture = true;
+
+      try {
+        // Intentamos con sonido primero
+        await playWithSound();
+        toast("Música activada 🎵");
+      } catch {
+        // Si el navegador bloquea con sonido, intentamos muteado
+        try {
+          await playMuted();
+          toast("Música lista 🎵 (activa sonido con el botón)");
+        } catch {
+          // Si falla, el usuario puede usar el botón
+        }
+      }
+    };
+
+    // Tap/click en cualquier parte
+    document.addEventListener("pointerdown", startFromGesture, { once: true, capture: true });
+    document.addEventListener("touchstart", startFromGesture, { once: true, capture: true, passive: true });
+    document.addEventListener("click", startFromGesture, { once: true, capture: true });
+
+    // Scroll (incluye swipe para desplazarse)
+    window.addEventListener("scroll", startFromGesture, { once: true, passive: true });
+    window.addEventListener("touchmove", startFromGesture, { once: true, passive: true });
 
     // Configura el audio
     audio.src = musicaUrl;
@@ -287,49 +319,6 @@
         setBtnState(false);
       }
     };
-
-    // En algunos navegadores (sobre todo iOS / in-app browsers), el audio solo se desbloquea si el gesto fue sobre un <button>.
-    // Creamos un botón invisible a pantalla completa para capturar el primer tap y arrancar la música.
-    const installFirstTapOverlay = () => {
-      const overlay = document.createElement("button");
-      overlay.type = "button";
-      overlay.setAttribute("aria-label", "Activar música");
-      overlay.style.position = "fixed";
-      overlay.style.inset = "0";
-      overlay.style.zIndex = "60";
-      overlay.style.border = "0";
-      overlay.style.background = "transparent";
-      overlay.style.padding = "0";
-      overlay.style.margin = "0";
-      overlay.style.cursor = "pointer";
-      overlay.style.webkitTapHighlightColor = "transparent";
-
-      // Importante: permitir interacción normal SI el usuario toca el botón de música (no lo bloqueamos)
-      overlay.addEventListener("click", async (e) => {
-        // Si el tap fue sobre el botón real de música, dejamos que su handler haga el trabajo
-        const isOnMusicBtn = e.target && (btn.contains(e.target) || e.target === btn);
-        if (isOnMusicBtn) return;
-
-        try {
-          await playWithSound();
-          toast("Música activada 🎵");
-        } catch {
-          // Si no deja con sonido, al menos intentamos muteado
-          try {
-            await playMuted();
-            toast("Música lista 🎵 (activa sonido con el botón)");
-          } catch {
-            // nada
-          }
-        } finally {
-          overlay.remove();
-        }
-      }, { once: true });
-
-      document.body.appendChild(overlay);
-    };
-
-    installFirstTapOverlay();
 
     btn.addEventListener("click", async () => {
       try {
