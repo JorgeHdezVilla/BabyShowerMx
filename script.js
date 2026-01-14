@@ -235,8 +235,26 @@
       return;
     }
 
-    // Asegura que el botón se vea
-    btn.hidden = false;
+    // Definir tryAutoplayMuted antes del setTimeout
+    const tryAutoplayMuted = async () => {
+      try {
+        await playMuted(); // algunos navegadores lo permiten solo muteado
+        toast("Música lista 🎵 (toca la pantalla para activar sonido)");
+      } catch {
+        setBtnState(false);
+      }
+    };
+
+    // Mostrar el botón de música y arrancar la música después de 2 segundos
+    btn.hidden = true;
+    setTimeout(() => {
+      btn.hidden = false;
+      // Pequeña animación al aparecer
+      btn.classList.remove("on");
+
+      // Intento de reproducción automática (normalmente solo funcionará si el navegador lo permite muteado)
+      tryAutoplayMuted();
+    }, 2000);
 
     // Configura el audio
     audio.src = musicaUrl;
@@ -274,14 +292,6 @@
       localStorage.setItem("baby_invite_music_on", "0");
     };
 
-    const tryAutoplayMuted = async () => {
-      try {
-        await playMuted(); // algunos navegadores lo permiten solo muteado
-        toast("Música lista 🎵 (toca la pantalla para activar sonido)");
-      } catch {
-        setBtnState(false);
-      }
-    };
 
     // En algunos navegadores (sobre todo iOS / in-app browsers), el audio solo se desbloquea si el gesto fue sobre un <button>.
     // Creamos un botón invisible a pantalla completa para capturar el primer tap y arrancar la música.
