@@ -254,70 +254,93 @@
     const savedOn = localStorage.getItem("baby_invite_music_on") === "1";
     setBtnState(false);
 
+    const playWithSound = async () => {
+      audio.muted = false;
+      audio.volume = 0.45;
+      await audio.play();
+      setBtnState(true);
+      localStorage.setItem("baby_invite_music_on", "1");
+    };
+
+    const playMuted = async () => {
+      audio.muted = true;
+      await audio.play();
+      setBtnState(true);
+    };
+
+    const pauseMusic = () => {
+      audio.pause();
+      setBtnState(false);
+      localStorage.setItem("baby_invite_music_on", "0");
+    };
+
     const tryAutoplayMuted = async () => {
       try {
-        audio.muted = true;
-        await audio.play(); // algunos navegadores lo permiten solo muteado
-        setBtnState(true);
+        await playMuted(); // algunos navegadores lo permiten solo muteado
         toast("Música lista 🎵 (toca la pantalla para activar sonido)");
       } catch {
         setBtnState(false);
       }
     };
 
-    // Intento inmediato (puede fallar en iOS)
-    tryAutoplayMuted();
+    // En algunos navegadores (sobre todo iOS / in-app browsers), el audio solo se desbloquea si el gesto fue sobre un <button>.
+    // Creamos un botón invisible a pantalla completa para capturar el primer tap y arrancar la música.
+    const installFirstTapOverlay = () => {
+      const overlay = document.createElement("button");
+      overlay.type = "button";
+      overlay.setAttribute("aria-label", "Activar música");
+      overlay.style.position = "fixed";
+      overlay.style.inset = "0";
+      overlay.style.zIndex = "60";
+      overlay.style.border = "0";
+      overlay.style.background = "transparent";
+      overlay.style.padding = "0";
+      overlay.style.margin = "0";
+      overlay.style.cursor = "pointer";
+      overlay.style.webkitTapHighlightColor = "transparent";
 
-    // Garantiza inicio al primer toque/click en cualquier parte (esto SÍ cuenta como gesto de usuario)
-    const startOnFirstInteraction = async () => {
-      try {
-        // Quitamos listeners (por si el navegador dispara varios eventos)
-        document.removeEventListener("pointerdown", startOnFirstInteraction, true);
-        document.removeEventListener("touchstart", startOnFirstInteraction, true);
-        document.removeEventListener("click", startOnFirstInteraction, true);
+      // Importante: permitir interacción normal SI el usuario toca el botón de música (no lo bloqueamos)
+      overlay.addEventListener("click", async (e) => {
+        // Si el tap fue sobre el botón real de música, dejamos que su handler haga el trabajo
+        const isOnMusicBtn = e.target && (btn.contains(e.target) || e.target === btn);
+        if (isOnMusicBtn) return;
 
-        // Por defecto intentamos arrancar con sonido (si el navegador lo permite en gesto de usuario)
-        // No guardamos preferencia aquí; la preferencia solo la guarda el botón.
-        audio.muted = false;
-        audio.volume = 0.45;
+        try {
+          await playWithSound();
+          toast("Música activada 🎵");
+        } catch {
+          // Si no deja con sonido, al menos intentamos muteado
+          try {
+            await playMuted();
+            toast("Música lista 🎵 (activa sonido con el botón)");
+          } catch {
+            // nada
+          }
+        } finally {
+          overlay.remove();
+        }
+      }, { once: true });
 
-        await audio.play();
-
-        setBtnState(true);
-        toast("Música activada 🎵");
-      } catch {
-        // Si falla (por políticas del navegador), el usuario aún puede activarla con el botón
-      }
+      document.body.appendChild(overlay);
     };
 
-    document.addEventListener("pointerdown", startOnFirstInteraction, { once: true, capture: true });
-    document.addEventListener("touchstart", startOnFirstInteraction, { once: true, capture: true, passive: true });
-    document.addEventListener("click", startOnFirstInteraction, { once: true, capture: true });
+    installFirstTapOverlay();
 
-    // Botón: si está muteado, lo desmutea; si está sonando, pausa; si está pausado, reproduce con sonido.
     btn.addEventListener("click", async () => {
       try {
         if (audio.paused) {
-          audio.muted = false;
-          await audio.play(); // requiere gesto del usuario para sonar
-          setBtnState(true);
-          localStorage.setItem("baby_invite_music_on", "1");
+          await playWithSound();
           toast("Música activada 🎵");
           return;
         }
 
         if (audio.muted) {
-          audio.muted = false;
-          await audio.play(); // asegura que esté reproduciendo al activar sonido
-          setBtnState(true);
-          localStorage.setItem("baby_invite_music_on", "1");
+          await playWithSound();
           toast("Sonido activado 🔊");
           return;
         }
 
-        audio.pause();
-        setBtnState(false);
-        localStorage.setItem("baby_invite_music_on", "0");
+        pauseMusic();
         toast("Música en pausa");
       } catch {
         setBtnState(false);
