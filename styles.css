@@ -344,3 +344,61 @@ body{
   transform-origin: 50% 60%;
   animation: floaty 3.8s ease-in-out infinite;
 }
+
+.music-btn{
+  position: fixed;
+  right: 14px;
+  top: calc(14px + env(safe-area-inset-top));
+  z-index: 50;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,.85);
+  background: rgba(255,255,255,.78);
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 14px 34px rgba(27,42,58,.18);
+  color: rgba(27,42,58,.9);
+
+  font-family: "Poppins", system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+
+  transform: translateZ(0);
+}
+
+.music-btn:active{ transform: scale(.99); }
+
+.music-ico{
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(191,231,255,.65);
+  border: 1px solid rgba(158,215,255,.75);
+}
+
+.music-ico svg{ width: 18px; height: 18px; }
+
+.music-btn.on .music-ico{
+  box-shadow: 0 0 0 7px rgba(105,191,240,.18);
+  animation: musicPulse 1.35s ease-in-out infinite;
+}
+
+@keyframes musicPulse{
+  0%,100%{ transform: scale(1); }
+  50%{ transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .music-btn.on .music-ico{ animation: none; }
+}

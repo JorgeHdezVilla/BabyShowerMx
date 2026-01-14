@@ -191,6 +191,7 @@
     if (notas) extras.appendChild(makeExtra("📝 Notas", notas));
 
     $("#footerText").textContent = "¡Te esperamos con mucha alegría!";
+    initMusic(d);
 
     // Micro interacción: copiar dirección al tap (si existe)
     if (direccion) {
@@ -212,5 +213,118 @@
     }
   };
 
+  // Música de fondo (opcional). Requiere interacción del usuario (tap) para reproducirse en mobile.
+  const initMusic = (d) => {
+    const musicaUrl = safeText(d.musicaUrl);
+    const audio = document.getElementById("bgAudio");
+    const btn = document.getElementById("musicBtn");
+    const btnText = document.getElementById("musicText");
+
+    if (!audio || !btn || !btnText) return;
+
+    const setBtnState = (on) => {
+      btn.classList.toggle("on", on);
+      btn.setAttribute("aria-pressed", String(on));
+      btn.setAttribute("aria-label", on ? "Pausar música" : "Activar música");
+      btnText.textContent = on ? "Pausar" : "Música";
+    };
+
+    // Si no hay URL, no mostramos el botón
+    if (!musicaUrl) {
+      btn.hidden = true;
+      return;
+    }
+
+    // Asegura que el botón se vea
+    btn.hidden = false;
+
+    // Configura el audio
+    audio.src = musicaUrl;
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.playsInline = true;
+    audio.load();
+
+    // Si falla carga/ruta
+    audio.addEventListener("error", () => {
+      setBtnState(false);
+      toast("No se pudo cargar el audio. Revisa la ruta en musicaUrl.");
+    });
+
+    const savedOn = localStorage.getItem("baby_invite_music_on") === "1";
+    setBtnState(false);
+
+    const tryAutoplayMuted = async () => {
+      try {
+        audio.muted = true;
+        await audio.play(); // algunos navegadores lo permiten solo muteado
+        setBtnState(true);
+        toast("Música lista 🎵 (toca la pantalla para activar sonido)");
+      } catch {
+        setBtnState(false);
+      }
+    };
+
+    // Intento inmediato (puede fallar en iOS)
+    tryAutoplayMuted();
+
+    // Garantiza inicio al primer toque/click en cualquier parte (esto SÍ cuenta como gesto de usuario)
+    const startOnFirstInteraction = async () => {
+      try {
+        // Quitamos listeners (por si el navegador dispara varios eventos)
+        document.removeEventListener("pointerdown", startOnFirstInteraction, true);
+        document.removeEventListener("touchstart", startOnFirstInteraction, true);
+        document.removeEventListener("click", startOnFirstInteraction, true);
+
+        // Por defecto intentamos arrancar con sonido (si el navegador lo permite en gesto de usuario)
+        // No guardamos preferencia aquí; la preferencia solo la guarda el botón.
+        audio.muted = false;
+        audio.volume = 0.45;
+
+        await audio.play();
+
+        setBtnState(true);
+        toast("Música activada 🎵");
+      } catch {
+        // Si falla (por políticas del navegador), el usuario aún puede activarla con el botón
+      }
+    };
+
+    document.addEventListener("pointerdown", startOnFirstInteraction, { once: true, capture: true });
+    document.addEventListener("touchstart", startOnFirstInteraction, { once: true, capture: true, passive: true });
+    document.addEventListener("click", startOnFirstInteraction, { once: true, capture: true });
+
+    // Botón: si está muteado, lo desmutea; si está sonando, pausa; si está pausado, reproduce con sonido.
+    btn.addEventListener("click", async () => {
+      try {
+        if (audio.paused) {
+          audio.muted = false;
+          await audio.play(); // requiere gesto del usuario para sonar
+          setBtnState(true);
+          localStorage.setItem("baby_invite_music_on", "1");
+          toast("Música activada 🎵");
+          return;
+        }
+
+        if (audio.muted) {
+          audio.muted = false;
+          await audio.play(); // asegura que esté reproduciendo al activar sonido
+          setBtnState(true);
+          localStorage.setItem("baby_invite_music_on", "1");
+          toast("Sonido activado 🔊");
+          return;
+        }
+
+        audio.pause();
+        setBtnState(false);
+        localStorage.setItem("baby_invite_music_on", "0");
+        toast("Música en pausa");
+      } catch {
+        setBtnState(false);
+        localStorage.setItem("baby_invite_music_on", "0");
+        toast("Tu navegador bloqueó el audio. Toca el botón nuevamente.");
+      }
+    });
+  };
   document.addEventListener("DOMContentLoaded", init);
 })();

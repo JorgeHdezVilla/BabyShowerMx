@@ -38,6 +38,7 @@
     <!-- EDITA AQUÍ -->
     <script>
       const data = {
+        musicaUrl: "lullaby.mp3",
         nombreBebe: "Jorgito",
         padres: "Fabiola y Jorge",
         fecha: "21 de Febrero",
@@ -52,6 +53,19 @@
     </script>
 
     <main class="page" id="app" aria-live="polite">
+      <!-- Música de fondo (opcional) -->
+      <audio id="bgAudio" preload="none" loop playsinline></audio>
+
+      <button class="music-btn" id="musicBtn" type="button" aria-pressed="false" aria-label="Activar música" hidden>
+        <span class="music-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 18V6l12-2v12" stroke="rgba(27,42,58,.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7" cy="18" r="3" stroke="rgba(27,42,58,.9)" stroke-width="2"/>
+            <circle cx="19" cy="16" r="3" stroke="rgba(27,42,58,.9)" stroke-width="2"/>
+          </svg>
+        </span>
+        <span class="music-text" id="musicText">Música</span>
+      </button>
       <div class="bg">
         <div class="cloud c1"></div>
         <div class="cloud c2"></div>
