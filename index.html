@@ -1,0 +1,149 @@
+<!-- index.html -->
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#BFE7FF" />
+
+    <title>Invitación Baby Shower (Niño)</title>
+
+    <!-- Open Graph / WhatsApp / Facebook -->
+    <link rel="canonical" href="https://USUARIO.github.io/NOMBRE_DEL_REPO/" />
+    <meta property="og:title" content="Invitación Baby Shower (Niño)" />
+    <meta property="og:description" content="Acompáñanos a celebrar la llegada de nuestro bebé. Fecha, hora y ubicación aquí." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://USUARIO.github.io/NOMBRE_DEL_REPO/" />
+    <meta property="og:image" content="https://USUARIO.github.io/NOMBRE_DEL_REPO/preview.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Invitación Baby Shower (Niño)" />
+    <meta name="twitter:description" content="Fecha, hora, ubicación y RSVP." />
+    <meta name="twitter:image" content="https://USUARIO.github.io/NOMBRE_DEL_REPO/preview.jpg" />
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <!-- EDITA AQUÍ -->
+    <script>
+      const data = {
+        nombreBebe: "Jorgito",
+        padres: "Fabiola y Jorge",
+        fecha: "21 de Febrero",
+        hora: "3:00 PM",
+        ubicacionNombre: "Calle Gabriel Leyva Lote 4 manzana 11",
+        direccion: "Colonia Alfredo del Mazo, Ixtapaluca Edo. De México CP 56577",
+        mapsUrl: "https://www.google.com/maps?q=19.2953577,-98.9077305&entry=gps&lucs=,94297695,94275415,94284508,94231188,94280568,47071704,94218641,94282134,94286869&g_ep=CAISEjI1LjQ5LjkuODM4ODk5MTgzMBgAIIgnKlEsOTQyOTc2OTUsOTQyNzU0MTUsOTQyODQ1MDgsOTQyMzExODgsOTQyODA1NjgsNDcwNzE3MDQsOTQyMTg2NDEsOTQyODIxMzQsOTQyODY4NjlCAk1Y&skid=988e10e9-fe90-42ae-90eb-08bcf100ca21&g_st=iw",
+        lluviaRegalos: "",
+        dressCode: "",
+        notas: ""
+      };
+    </script>
+
+    <main class="page" id="app" aria-live="polite">
+      <div class="bg">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
+        <div class="sparkles" aria-hidden="true"></div>
+      </div>
+
+      <section class="card">
+        <header class="hero">
+          <div class="top-deco" aria-hidden="true">
+            <svg viewBox="0 0 390 120" width="100%" height="120" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gSky" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#BFE7FF" />
+                  <stop offset="100%" stop-color="#EAF8FF" />
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="390" height="120" fill="url(#gSky)" />
+              <path d="M0,74 C70,50 120,104 195,74 C270,44 320,104 390,74 L390,120 L0,120 Z" fill="#FFF7DD" opacity="0.9"/>
+              <circle cx="52" cy="34" r="8" fill="#FFE9A8"/>
+              <circle cx="332" cy="30" r="10" fill="#FFE9A8" opacity="0.8"/>
+
+              <!-- Estrellitas -->
+              <g fill="#FFE9A8" opacity="0.9">
+                <path d="M96 22 l3 6 6 3 -6 3 -3 6 -3-6 -6-3 6-3z"/>
+                <path d="M292 46 l2 4 4 2 -4 2 -2 4 -2-4 -4-2 4-2z"/>
+                <path d="M202 16 l2 4 4 2 -4 2 -2 4 -2-4 -4-2 4-2z"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            <span class="badge-text">Invitación</span>
+          </div>
+
+          <h1 class="title" id="title1"></h1>
+          <p class="kicker" id="title2"></p>
+
+          <div class="stork-wrap">
+            <img src="image.png" alt="Cigüeña baby shower" class="stork-image" />
+          </div>
+
+          <p class="subtitle" id="subtitle"></p>
+        </header>
+
+        <section class="info">
+          <div class="grid" id="infoCards"></div>
+        </section>
+
+        <section class="extras" id="extras"></section>
+
+        <footer class="footer">
+          <p class="footer-text" id="footerText"></p>
+          
+          <div class="bottom-deco" aria-hidden="true">
+            <svg viewBox="0 0 390 140" width="100%" height="140" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gCream" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#FFF7DD" />
+                  <stop offset="100%" stop-color="#FFFFFF" />
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="390" height="140" fill="url(#gCream)" />
+              <path d="M0,28 C70,52 120,0 195,28 C270,56 320,0 390,28 L390,0 L0,0 Z" fill="#BFE7FF" opacity="0.75"/>
+              <path d="M0,96 C85,128 120,66 195,96 C270,126 310,70 390,96 L390,140 L0,140 Z" fill="#EAF8FF" />
+
+              <!-- Huellitas/ositos (abstracto, propio) -->
+              <g opacity="0.55" fill="#9ED7FF">
+                <circle cx="62" cy="110" r="6"/>
+                <circle cx="46" cy="118" r="3"/>
+                <circle cx="58" cy="122" r="3"/>
+                <circle cx="70" cy="122" r="3"/>
+                <circle cx="78" cy="118" r="3"/>
+              </g>
+              <g opacity="0.55" fill="#9ED7FF">
+                <circle cx="330" cy="114" r="6"/>
+                <circle cx="314" cy="122" r="3"/>
+                <circle cx="326" cy="126" r="3"/>
+                <circle cx="338" cy="126" r="3"/>
+                <circle cx="346" cy="122" r="3"/>
+              </g>
+            </svg>
+          </div>
+
+        
+        </footer>
+      </section>
+
+      <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
